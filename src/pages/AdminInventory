@@ -1,0 +1,99 @@
+import React, { useState, useEffect } from 'react';
+import Navbar from '../components/Navbar';
+import API from '../services/api';
+
+const AdminInventory = () => {
+  const [ingredients, setIngredients] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchInventory();
+  }, []);
+
+    const fetchInventory = async () => {
+    try {
+        const res = await API.get('/api/inventory'); // You'll create this endpoint
+        setIngredients(res.data);
+        setLoading(false);
+    } catch (err) {
+        console.error(err);
+    }
+    };
+
+    const getStockColor = (current, reorder) => {
+        const percent = (current / reorder) * 100;
+        if (percent < 10) return 'bg-red-600';
+        if (percent < 20) return 'bg-yellow-500';
+        return 'bg-green-600';
+    };
+
+  const getStockWidth = (current, reorder) => {
+    return Math.min((current / reorder) * 100, 100);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <div className="max-w-7xl mx-auto py-8 px-4">
+        <h1 className="text-5xl font-bold text-center text-amber-800 mb-12">
+          Inventory Management
+        </h1>
+
+        {loading ? (
+          <div className="text-center py-32 text-3xl">Loading stock...</div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+              {ingredients.map(ing => (
+                <div key={ing.name} className="bg-white p-8 rounded-3xl shadow-2xl">
+                  <div className="flex justify-between items-start mb-6">
+                    <div>
+                      <h3 className="text-3xl font-bold text-gray-800">{ing.name}</h3>
+                      <p className="text-xl text-gray-600 mt-2">Reorder at: {ing.reorderLevel} {ing.unit}</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-4xl font-bold text-amber-700">
+                        {ing.currentStock.toFixed(1)} {ing.unit}
+                      </div>
+                      <p className="text-lg text-gray-600">Used today: {ing.usageToday} {ing.unit}</p>
+                    </div>
+                  </div>
+
+                  <div className="w-full bg-gray-200 rounded-full h-12 overflow-hidden">
+                    <div
+                      className={`h-full transition-all duration-1000 ${getStockColor(ing.currentStock, ing.reorderLevel)}`}
+                      style={{ width: `${getStockWidth(ing.currentStock, ing.reorderLevel)}%` }}
+                    >
+                      <span className="flex items-center justify-center h-full text-white font-bold text-xl">
+                        {Math.round(getStockWidth(ing.currentStock, ing.reorderLevel))}%
+                      </span>
+                    </div>
+                  </div>
+
+                  {ing.currentStock < ing.reorderLevel && (
+                    <div className="mt-6 text-center">
+                      <span className="inline-block px-8 py-4 bg-red-600 text-white text-2xl font-bold rounded-full animate-pulse">
+                        ⚠️ LOW STOCK — REORDER NOW!
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="bg-red-50 p-10 rounded-3xl shadow-2xl text-center">
+              <h2 className="text-4xl font-bold text-red-800 mb-6">
+                Urgent Reorder List
+              </h2>
+              <p className="text-2xl text-red-700">
+                Paneer (3.2kg), Butter (4kg) — Critical!
+              </p>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default AdminInventory;

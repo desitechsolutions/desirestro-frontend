@@ -93,7 +93,8 @@ const KitchenKOT = () => {
                   <div>
                     <div className="text-3xl font-bold">{kot.kotNumber || 'KOT'}</div>
                     <div className="text-xl text-amber-300 mt-2">
-                      Table {kot.table?.tableNumber || '??'}
+                        Table {kot.party?.table?.tableNumber || '??'} 
+                        {kot.party?.id && `• Party ${kot.party.id}`}
                     </div>
                   </div>
                   <div className="text-right">
