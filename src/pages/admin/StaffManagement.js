@@ -10,7 +10,6 @@ const StaffManagement = () => {
   const [newStaff, setNewStaff] = useState({
     fullName: '',
     username: '',
-    password: '',
     role: 'CAPTAIN',
     phone: '',
     email: ''
@@ -47,14 +46,14 @@ const StaffManagement = () => {
   };
 
   const createStaff = async () => {
-    if (!newStaff.fullName || !newStaff.username || !newStaff.password) {
-      alert('Full Name, Username, and Password are required');
+    if (!newStaff.fullName || !newStaff.username) {
+      alert('Full Name and Username are required');
       return;
     }
     try {
       const res = await API.post('/api/staff', newStaff);
       setStaff(prev => [...prev, res.data]);
-      setNewStaff({ fullName: '', username: '', password: '', role: 'CAPTAIN', phone: '', email: '' });
+      setNewStaff({ fullName: '', username: '', role: 'CAPTAIN', phone: '', email: '' });
       alert('Staff member added successfully!');
     } catch (err) {
       alert('Failed to add staff — username may already exist');

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { jwtDecode } from 'jwt-decode';  // ← Named import, not default
+import { jwtDecode } from 'jwt-decode'; // ← Correct named import
 
 const AuthContext = createContext();
 
@@ -9,36 +9,39 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Check for token in sessionStorage on mount
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token'); // ← sessionStorage
     if (token) {
       try {
-        const decoded = jwtDecode(token);  // ← Use directly
+        const decoded = jwtDecode(token); // ← Named import usage
         setCurrentUser({
           username: decoded.sub,
           role: decoded.role,
-          fullName: decoded.fullName || 'User'
+          fullName: decoded.fullName || 'User',
         });
       } catch (error) {
         console.error('Invalid token', error);
-        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
       }
     }
     setLoading(false);
   }, []);
 
+  // Login user
   const login = (token, role, fullName) => {
-    localStorage.setItem('token', token);
-    const decoded = jwtDecode(token);  // ← Use directly
+    sessionStorage.setItem('token', token); // ← sessionStorage
+    const decoded = jwtDecode(token);
     setCurrentUser({
       username: decoded.sub,
       role,
-      fullName
+      fullName,
     });
   };
 
+  // Logout user
   const logout = () => {
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token'); // ← sessionStorage
     setCurrentUser(null);
   };
 
