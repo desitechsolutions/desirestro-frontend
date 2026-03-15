@@ -4,6 +4,12 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import API from '../services/api';
 
+const PAYMENT_MODES = [
+  { value: 'CASH', label: '💵 Cash', color: 'bg-green-600 hover:bg-green-700' },
+  { value: 'UPI', label: '📱 UPI', color: 'bg-purple-600 hover:bg-purple-700' },
+  { value: 'CARD', label: '💳 Card', color: 'bg-blue-600 hover:bg-blue-700' },
+];
+
 const CashierBilling = () => {
   const [tables, setTables] = useState([]);
   const [selectedTable, setSelectedTable] = useState(null);
@@ -11,6 +17,8 @@ const CashierBilling = () => {
   const [selectedParty, setSelectedParty] = useState(null);
   const [kots, setKots] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [paymentMode, setPaymentMode] = useState('CASH');
+  const [settling, setSettling] = useState(false);
 
   const GST_RATE = 0.18;
 
@@ -43,14 +51,12 @@ const CashierBilling = () => {
         <head>
             <title>Bill - Party ${selectedParty.id}</title>
             <style>
-            @media print {
-                body { font-family: Arial, sans-serif; font-size: 12px; width: 80mm; margin: 0; padding: 10px; }
-                .center { text-align: center; }
-                .large { font-size: 20px; font-weight: bold; }
-                .line { border-top: 2px dashed black; margin: 15px 0; }
-                .right { text-align: right; }
-                @page { margin: 0; size: 80mm auto; }
-            }
+            body { font-family: Arial, sans-serif; font-size: 12px; width: 80mm; margin: 0; padding: 10px; }
+            .center { text-align: center; }
+            .large { font-size: 20px; font-weight: bold; }
+            .line { border-top: 2px dashed black; margin: 15px 0; }
+            .right { text-align: right; }
+            @page { margin: 0; size: 80mm auto; }
             </style>
         </head>
         <body>
@@ -58,28 +64,29 @@ const CashierBilling = () => {
             <div class="center">Tax Invoice</div>
             <div class="center">GSTIN: 27ABCDE1234F1Z5</div>
             <div class="line"></div>
-            <div>Table: ${selectedTable.tableNumber} • Party: ${selectedParty.id}</div>
+            <div>Table: ${selectedTable.tableNumber} &bull; Party: ${selectedParty.id}</div>
             <div>Date: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}</div>
+            <div>Payment: ${paymentMode}</div>
             <div class="line"></div>
             ${kots.map(kot => `
             <div><strong>KOT ${kot.kotNumber}</strong></div>
             ${kot.items.map(item => `
-                <div class="flex justify-between">
-                <span>${item.quantity} × ${item.menuItemName}</span>
-                <span>₹${(item.price * item.quantity).toFixed(2)}</span>
+                <div style="display:flex;justify-content:space-between;">
+                <span>${item.quantity} &times; ${item.menuItemName}</span>
+                <span>&#8377;${(item.price * item.quantity).toFixed(2)}</span>
                 </div>
             `).join('')}
             `).join('')}
             <div class="line"></div>
             <div class="right">
-            <div>Subtotal: ₹${subtotal.toFixed(2)}</div>
-            <div>CGST (9%): ₹${(gst / 2).toFixed(2)}</div>
-            <div>SGST (9%): ₹${(gst / 2).toFixed(2)}</div>
-            <div class="large">TOTAL: ₹${total.toFixed(2)}</div>
+            <div>Subtotal: &#8377;${subtotal.toFixed(2)}</div>
+            <div>CGST (9%): &#8377;${(gst / 2).toFixed(2)}</div>
+            <div>SGST (9%): &#8377;${(gst / 2).toFixed(2)}</div>
+            <div class="large">TOTAL: &#8377;${total.toFixed(2)}</div>
             </div>
             <div class="line"></div>
             <div class="center large">THANK YOU!</div>
-            <div class="center">Visit Again 😊</div>
+            <div class="center">Visit Again &#128522;</div>
         </body>
         </html>
     `);
@@ -122,20 +129,16 @@ const CashierBilling = () => {
   const gst = subtotal * GST_RATE;
   const total = subtotal + gst;
 
-  const settleBill = async () => {
-    if (!window.confirm(`Settle bill for Party ${selectedParty.id}?\nTotal: ₹${total.toFixed(2)}`)) {
-      return;
-    }
-
+  const settleBill = async (mode) => {
+    setSettling(true);
     try {
-      await API.patch(`/api/bills/party/${selectedParty.id}`, { paymentMode: 'CASH' });
-
-      alert('Bill settled successfully! Party closed.');
+      await API.patch(`/api/bills/party/${selectedParty.id}`, { paymentMode: mode });
 
       // FULL UI RESET — clear everything
       setSelectedParty(null);
       setKots([]);
       setParties([]); // Will be refetched on next table click
+      setPaymentMode('CASH');
 
       // Refresh tables list immediately
       await fetchTables();
@@ -147,6 +150,8 @@ const CashierBilling = () => {
     } catch (err) {
       console.error('Settle error:', err);
       alert('Failed to settle bill');
+    } finally {
+      setSettling(false);
     }
   };
 
@@ -273,12 +278,37 @@ const CashierBilling = () => {
                 >
                     🖨️ PRINT BILL
                 </button>
-                <button
-                  onClick={settleBill}
-                  className="px-24 py-10 bg-green-600 hover:bg-green-700 text-white text-5xl font-bold rounded-3xl shadow-3xl transition transform hover:scale-110"
-                >
-                  SETTLE BILL & FREE SEATS
-                </button>
+
+                {/* Payment Mode Selection */}
+                <div className="mt-10 bg-gray-50 p-8 rounded-2xl border-2 border-gray-200">
+                  <h4 className="text-2xl font-bold text-gray-700 mb-6 text-center">Select Payment Mode</h4>
+                  <div className="flex gap-4 justify-center mb-8">
+                    {PAYMENT_MODES.map(pm => (
+                      <button
+                        key={pm.value}
+                        onClick={() => setPaymentMode(pm.value)}
+                        className={`px-8 py-4 text-xl font-bold rounded-xl shadow transition transform hover:scale-105 ${
+                          paymentMode === pm.value
+                            ? 'ring-4 ring-amber-500 ring-offset-2 ' + pm.color + ' text-white'
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }`}
+                      >
+                        {pm.label}
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => settleBill(paymentMode)}
+                    disabled={settling}
+                    className={`w-full py-8 text-4xl font-bold rounded-3xl shadow-3xl transition transform ${
+                      settling
+                        ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                        : 'bg-green-600 hover:bg-green-700 text-white hover:scale-105'
+                    }`}
+                  >
+                    {settling ? 'Processing...' : `✅ SETTLE ₹${total.toFixed(2)} via ${paymentMode}`}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
