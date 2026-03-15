@@ -95,6 +95,16 @@ const StaffManagement = () => {
     }
   };
 
+  const deleteStaff = async (id, name) => {
+    if (!window.confirm(`Delete staff member "${name}"? This cannot be undone.`)) return;
+    try {
+      await API.delete(`/api/staff/${id}`);
+      setStaff(prev => prev.filter(s => s.id !== id));
+    } catch (err) {
+      alert('Failed to delete staff member');
+    }
+  };
+
   const clockInOut = async (staffId, action) => {
     try {
       await API.post(`/api/staff/${staffId}/${action}`);
@@ -201,6 +211,13 @@ const StaffManagement = () => {
                       className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl text-lg font-bold"
                     >
                       Clock Out
+                    </button>
+                    <button
+                      onClick={() => deleteStaff(s.id, s.fullName)}
+                      className="bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded-xl text-lg font-bold"
+                      aria-label="Delete staff member"
+                    >
+                      🗑️
                     </button>
                   </div>
                 </div>

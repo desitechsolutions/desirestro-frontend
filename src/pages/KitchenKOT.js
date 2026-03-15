@@ -6,6 +6,7 @@ import API from '../services/api';
 
 const KitchenKOT = () => {
   const [kots, setKots] = useState([]);
+  const [interacted, setInteracted] = useState(false);
   const prevKOTsRef = useRef([]); // To detect truly new KOTs
   const hasInteracted = useRef(false); // Unlock audio after first click/keypress
 
@@ -13,6 +14,7 @@ const KitchenKOT = () => {
   useEffect(() => {
     const unlockAudio = () => {
       hasInteracted.current = true;
+      setInteracted(true);
       document.removeEventListener('click', unlockAudio);
       document.removeEventListener('keydown', unlockAudio);
       document.removeEventListener('touchstart', unlockAudio);
@@ -68,6 +70,7 @@ const KitchenKOT = () => {
     const interval = setInterval(fetchKOTs, 5000); // Poll every 5 seconds
 
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -162,7 +165,7 @@ const KitchenKOT = () => {
       </div>
 
       {/* Hint for first-time users */}
-      {!hasInteracted.current && kots.length === 0 && (
+      {!interacted && (
         <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-amber-600 text-white px-8 py-4 rounded-full text-xl font-bold shadow-2xl animate-bounce">
           👆 Click or tap anywhere to enable sound alerts 🔔
         </div>

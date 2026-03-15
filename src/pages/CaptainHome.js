@@ -14,8 +14,6 @@ const CaptainHome = () => {
   const [selectedTable, setSelectedTable] = useState(null);
   const [parties, setParties] = useState([]);
   const [selectedParty, setSelectedParty] = useState(null);
-  const [categories, setCategories] = useState([]); // Raw categories
-  const [allMenuItems, setAllMenuItems] = useState([]); // Flat list of items
   const [categoriesWithItems, setCategoriesWithItems] = useState([]); // Final grouped
   const [cart, setCart] = useState([]);
   const [readyKOTs, setReadyKOTs] = useState([]);
@@ -37,6 +35,7 @@ const CaptainHome = () => {
     }, 10000);
 
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchTables = async () => {
@@ -78,29 +77,18 @@ const CaptainHome = () => {
     setActiveCategoryId(null);
 
     try {
-      const [partyRes, catRes, itemRes] = await Promise.all([
+      const [partyRes, menuRes] = await Promise.all([
         API.get(`/api/parties/table/${table.id}`),
-        API.get('/api/menu/categories'),
-        API.get('/api/menu/items')
+        API.get('/api/menu')
       ]);
 
       const activeParties = Array.isArray(partyRes.data)
         ? partyRes.data.filter(p => p.status === 'ACTIVE')
         : [];
 
-      const cats = Array.isArray(catRes.data) ? catRes.data : [];
-      const items = Array.isArray(itemRes.data) ? itemRes.data : [];
+      const grouped = Array.isArray(menuRes.data) ? menuRes.data : [];
 
       setParties(activeParties);
-      setCategories(cats);
-      setAllMenuItems(items);
-
-      // Group items by categoryId
-      const grouped = cats.map(cat => ({
-        ...cat,
-        items: items.filter(item => item.categoryId === cat.id)
-      }));
-
       setCategoriesWithItems(grouped);
 
       if (grouped.length > 0) {
@@ -108,8 +96,6 @@ const CaptainHome = () => {
       }
     } catch (err) {
       console.error(err);
-      setCategories([]);
-      setAllMenuItems([]);
       setCategoriesWithItems([]);
     }
   };
@@ -119,7 +105,10 @@ const CaptainHome = () => {
       const res = await API.post(`/api/parties/table/${selectedTable.id}`, {
         occupiedSeats: seats
       });
-      setParties(prev => [...prev, res.data]);
+      const newParty = res.data;
+      setParties(prev => [...prev, newParty]);
+      // Auto-select the newly created party to start ordering immediately
+      setSelectedParty(newParty);
     } catch (err) {
       console.error(err);
     }

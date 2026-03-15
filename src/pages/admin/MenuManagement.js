@@ -29,6 +29,7 @@ const MenuManagement = () => {
 
   useEffect(() => {
     fetchMenuData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchMenuData = async () => {
