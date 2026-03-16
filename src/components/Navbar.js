@@ -8,8 +8,8 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate('/login');
   };
 
@@ -32,9 +32,14 @@ const Navbar = () => {
           {/* Left: Brand */}
           <div className="flex items-center gap-3">
             <span className="text-2xl">🍛</span>
-            <h1 className="text-xl font-extrabold tracking-wide text-white">
-              DesiRestro POS
-            </h1>
+            <div>
+              <h1 className="text-xl font-extrabold tracking-wide text-white leading-tight">
+                {currentUser?.restaurantName || 'DesiRestro POS'}
+              </h1>
+              {currentUser?.restaurantName && (
+                <p className="text-xs text-amber-200 leading-tight">DesiRestro POS</p>
+              )}
+            </div>
             <span className="hidden sm:inline bg-white/20 text-xs px-3 py-1 rounded-full">
               {currentUser?.role}
             </span>

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode'; // ← Correct named import
+import { authLogout } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -18,31 +19,54 @@ export const AuthProvider = ({ children }) => {
         setCurrentUser({
           username: decoded.sub,
           role: decoded.role,
-          fullName: decoded.fullName || 'User',
+          fullName: sessionStorage.getItem('fullName') || 'User',
+          restaurantId: decoded.restaurantId || null,
+          restaurantName: sessionStorage.getItem('restaurantName') || null,
         });
       } catch (error) {
         console.error('Invalid token', error);
         sessionStorage.removeItem('token');
+        sessionStorage.removeItem('fullName');
+        sessionStorage.removeItem('restaurantName');
       }
     }
     setLoading(false);
   }, []);
 
-  // Login user
-  const login = (token, role, fullName) => {
+  /**
+   * Login user.
+   * @param {string} token      - JWT access token
+   * @param {string} role       - user role
+   * @param {string} fullName   - display name
+   * @param {number|null} restaurantId   - tenant restaurant id
+   * @param {string|null} restaurantName - tenant restaurant name
+   */
+  const login = (token, role, fullName, restaurantId = null, restaurantName = null) => {
     sessionStorage.setItem('token', token); // ← sessionStorage
+    sessionStorage.setItem('fullName', fullName || '');
+    if (restaurantName) sessionStorage.setItem('restaurantName', restaurantName);
     const decoded = jwtDecode(token);
     setCurrentUser({
       username: decoded.sub,
       role,
       fullName,
+      restaurantId: restaurantId ?? decoded.restaurantId ?? null,
+      restaurantName: restaurantName || null,
     });
   };
 
-  // Logout user
-  const logout = () => {
-    sessionStorage.removeItem('token'); // ← sessionStorage
-    setCurrentUser(null);
+  // Logout user — revoke refresh token on server, then clear local state
+  const logout = async () => {
+    try {
+      await authLogout();
+    } catch (_) {
+      // Ignore errors — we still clear local state
+    } finally {
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('fullName');
+      sessionStorage.removeItem('restaurantName');
+      setCurrentUser(null);
+    }
   };
 
   return (
