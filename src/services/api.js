@@ -219,6 +219,107 @@ export const approveLeave = (id) =>
 export const rejectLeave = (id) =>
   API.patch(`/api/staff/leaves/${id}/reject`);
 
+// ── CUSTOMER MANAGEMENT ──────────────────────────────────────────────────
+export const getCustomers = (restaurantId) =>
+  API.get(`/api/restaurants/${restaurantId}/customers`);
+
+export const getCustomer = (restaurantId, customerId) =>
+  API.get(`/api/restaurants/${restaurantId}/customers/${customerId}`);
+
+export const createCustomer = (restaurantId, data) =>
+  API.post(`/api/restaurants/${restaurantId}/customers`, data);
+
+export const updateCustomer = (restaurantId, customerId, data) =>
+  API.put(`/api/restaurants/${restaurantId}/customers/${customerId}`, data);
+
+export const deleteCustomer = (restaurantId, customerId) =>
+  API.delete(`/api/restaurants/${restaurantId}/customers/${customerId}`);
+
+export const searchCustomers = (restaurantId, query) =>
+  API.get(`/api/restaurants/${restaurantId}/customers/search`, { params: { query } });
+
+// ── BILLING (NEW ENDPOINTS) ──────────────────────────────────────────────
+export const createBill = (restaurantId, data) =>
+  API.post(`/api/restaurants/${restaurantId}/billing`, data);
+
+export const getBill = (restaurantId, billId) =>
+  API.get(`/api/restaurants/${restaurantId}/billing/${billId}`);
+
+export const getBills = (restaurantId, params) =>
+  API.get(`/api/restaurants/${restaurantId}/billing`, { params });
+
+export const settleBillPayment = (restaurantId, billId, data) =>
+  API.post(`/api/restaurants/${restaurantId}/billing/${billId}/settle`, data);
+
+// ── DAILY SALES SUMMARY ──────────────────────────────────────────────────
+export const getDailySalesSummary = (restaurantId, date) =>
+  API.get(`/api/restaurants/${restaurantId}/daily-sales-summary/${date}`);
+
+export const getDailySalesSummaryRange = (restaurantId, startDate, endDate) =>
+  API.get(`/api/restaurants/${restaurantId}/daily-sales-summary/range`, {
+    params: { startDate, endDate }
+  });
+
+export const generateDailySalesSummary = (restaurantId, date) =>
+  API.post(`/api/restaurants/${restaurantId}/daily-sales-summary/generate/${date}`);
+
+// ── REPORTS & ANALYTICS ──────────────────────────────────────────────────
+export const getDailySalesReport = (restaurantId, date) =>
+  API.get(`/api/restaurants/${restaurantId}/reports/daily-sales/${date}`);
+
+export const getMonthlySalesReport = (restaurantId, month, year) =>
+  API.get(`/api/restaurants/${restaurantId}/reports/monthly-sales/${month}/${year}`);
+
+export const getItemSalesReport = (restaurantId, startDate, endDate) =>
+  API.get(`/api/restaurants/${restaurantId}/reports/item-sales`, {
+    params: { startDate, endDate }
+  });
+
+export const getCategorySalesReport = (restaurantId, startDate, endDate) =>
+  API.get(`/api/restaurants/${restaurantId}/reports/category-sales`, {
+    params: { startDate, endDate }
+  });
+
+export const getPaymentMethodReport = (restaurantId, startDate, endDate) =>
+  API.get(`/api/restaurants/${restaurantId}/reports/payment-methods`, {
+    params: { startDate, endDate }
+  });
+
+export const getGSTReport = (restaurantId, month, year) =>
+  API.get(`/api/restaurants/${restaurantId}/reports/gst/${month}/${year}`);
+
+export const getTopCustomersReport = (restaurantId, startDate, endDate, limit = 10) =>
+  API.get(`/api/restaurants/${restaurantId}/reports/top-customers`, {
+    params: { startDate, endDate, limit }
+  });
+
+export const getHourlyAnalysisReport = (restaurantId, date) =>
+  API.get(`/api/restaurants/${restaurantId}/reports/hourly-analysis/${date}`);
+
+export const getComparativeReport = (restaurantId, period, startDate, endDate) =>
+  API.get(`/api/restaurants/${restaurantId}/reports/comparative/${period}`, {
+    params: { startDate, endDate }
+  });
+
+export const exportReportPDF = (restaurantId, reportType, params) =>
+  API.get(`/api/restaurants/${restaurantId}/reports/export/pdf`, {
+    params: { reportType, ...params },
+    responseType: 'blob'
+  });
+
+export const exportReportExcel = (restaurantId, reportType, params) =>
+  API.get(`/api/restaurants/${restaurantId}/reports/export/excel`, {
+    params: { reportType, ...params },
+    responseType: 'blob'
+  });
+
+// ── AUDIT LOGS ───────────────────────────────────────────────────────────
+export const getAuditLogs = (restaurantId, params) =>
+  API.get(`/api/restaurants/${restaurantId}/audit-logs`, { params });
+
+export const getAuditLogsByEntity = (restaurantId, entityType, entityId) =>
+  API.get(`/api/restaurants/${restaurantId}/audit-logs/entity/${entityType}/${entityId}`);
+
 // ── ADMIN REPORTS ─────────────────────────────────────────────────────────────
 export const getTodayStats = () =>
   API.get('/api/admin/today-stats');

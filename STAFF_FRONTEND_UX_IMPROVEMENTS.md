@@ -1,3 +1,13 @@
+# Staff Management Frontend UX Improvements
+
+## Overview
+This document provides the complete updated code for `src/pages/admin/StaffManagement.js` with Toast notifications, loading states, confirmation dialogs, and better error handling.
+
+## Complete Updated Code
+
+```javascript
+// src/pages/admin/StaffManagement.js
+
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import API from '../../services/api';
@@ -416,3 +426,76 @@ const StaffManagement = () => {
 };
 
 export default StaffManagement;
+```
+
+## Key Improvements
+
+### 1. Toast Notifications
+- ✅ Replaced all `alert()` calls with `toast.success()`, `toast.error()`, `toast.info()`
+- ✅ Better user feedback with colored notifications
+- ✅ Auto-dismiss after 3 seconds
+
+### 2. Loading States
+- ✅ Added `isSubmitting` state for form submissions
+- ✅ Disabled buttons during submission
+- ✅ Visual feedback ("ADDING...", "SUBMITTING...")
+- ✅ Full-page loading spinner on initial load
+
+### 3. Confirmation Dialogs
+- ✅ Used `useConfirm` hook for delete, approve, reject actions
+- ✅ Clear confirmation messages
+- ✅ Color-coded buttons (green for approve, red for delete/reject)
+
+### 4. Error Handling
+- ✅ Extract error messages from API response
+- ✅ Fallback to generic messages
+- ✅ Display user-friendly error messages
+
+### 5. ApiResponse Wrapper Handling
+- ✅ Handle both `res.data.data` and `res.data` formats
+- ✅ Compatible with new backend ApiResponse wrapper
+
+### 6. Form Validation
+- ✅ Client-side validation before API calls
+- ✅ Username length validation
+- ✅ Date range validation
+- ✅ Required field validation
+
+### 7. UX Enhancements
+- ✅ Disabled state for buttons during submission
+- ✅ Min date validation for leave dates
+- ✅ Empty state messages
+- ✅ Active status indicator (🟢)
+- ✅ Better button labels with icons
+- ✅ Transition effects on hover
+
+## Installation
+
+No additional dependencies needed! The code uses:
+- `react-toastify` (already installed)
+- `useConfirm` hook (already created)
+- `LoadingSpinner` component (already created)
+
+## Usage
+
+Simply replace the content of `src/pages/admin/StaffManagement.js` with the code above.
+
+## Testing Checklist
+
+- [ ] Test staff creation with valid data
+- [ ] Test staff creation with invalid data (empty fields, short username)
+- [ ] Test staff deletion with confirmation
+- [ ] Test clock-in/clock-out
+- [ ] Test leave application
+- [ ] Test leave approval/rejection
+- [ ] Test loading states
+- [ ] Test error messages
+- [ ] Test Toast notifications
+- [ ] Test confirmation dialogs
+
+## Notes
+
+- All Toast notifications are color-coded (green for success, red for error, blue for info)
+- Confirmation dialogs prevent accidental deletions
+- Loading states prevent double submissions
+- Error messages are extracted from API responses for better debugging

@@ -2,13 +2,22 @@
 
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useAuth } from '../../context/AuthContext';
+import { getDailySalesReport, getPaymentMethodReport } from '../../services/api';
+import PaymentMethodChart from '../../components/reports/PaymentMethodChart';
+import ExportButtons from '../../components/reports/ExportButtons';
 import API from '../../services/api';
 
 const SalesDashboard = () => {
+  const { user } = useAuth();
+  const restaurantId = user?.restaurantId;
+
   const [todayStats, setTodayStats] = useState({ revenue: 0, bills: 0, avgBill: 0, orders: 0 });
   const [topItems, setTopItems] = useState([]);
   const [weeklyRevenue, setWeeklyRevenue] = useState([]);
   const [rangeRevenue, setRangeRevenue] = useState([]);
+  const [paymentReport, setPaymentReport] = useState(null);
+  const [dailyReport, setDailyReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const [rangeLoading, setRangeLoading] = useState(false);
 
@@ -22,6 +31,7 @@ const SalesDashboard = () => {
     const fetchSalesData = async () => {
       setLoading(true);
       try {
+        // Fetch legacy data for backward compatibility
         const [todayRes, topRes, weeklyRes] = await Promise.all([
           API.get('/api/admin/today-stats'),
           API.get('/api/admin/top-items'),
@@ -30,6 +40,20 @@ const SalesDashboard = () => {
         setTodayStats(todayRes.data);
         setTopItems(topRes.data);
         setWeeklyRevenue(weeklyRes.data);
+
+        // Fetch new report data if restaurantId is available
+        if (restaurantId) {
+          try {
+            const [dailyRes, paymentRes] = await Promise.all([
+              getDailySalesReport(restaurantId, today),
+              getPaymentMethodReport(restaurantId, sevenDaysAgo, today)
+            ]);
+            setDailyReport(dailyRes.data);
+            setPaymentReport(paymentRes.data);
+          } catch (err) {
+            console.log('New reports not available yet:', err);
+          }
+        }
       } catch (err) {
         console.error('Sales fetch error:', err);
       } finally {
@@ -37,7 +61,7 @@ const SalesDashboard = () => {
       }
     };
     fetchSalesData();
-  }, []);
+  }, [restaurantId]);
 
   const fetchRangeRevenue = async () => {
     if (!fromDate || !toDate) return;
@@ -56,6 +80,7 @@ const SalesDashboard = () => {
 
   return (
     <>
+      {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-16">
         <div className="bg-gradient-to-br from-amber-400 to-orange-600 p-10 rounded-3xl shadow-3xl text-white">
           <h3 className="text-3xl font-semibold mb-6">Today's Revenue</h3>
@@ -79,6 +104,7 @@ const SalesDashboard = () => {
         </div>
       </div>
 
+      {/* Charts Row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-16">
         <div className="bg-white p-12 rounded-3xl shadow-3xl">
           <h3 className="text-4xl font-bold text-gray-800 mb-10 text-center">Weekly Revenue Trend</h3>
@@ -108,9 +134,61 @@ const SalesDashboard = () => {
         </div>
       </div>
 
+      {/* Payment Method Chart - NEW */}
+      {paymentReport && (
+        <div className="mb-16">
+          <PaymentMethodChart paymentReport={paymentReport} showBarChart={false} />
+        </div>
+      )}
+
+      {/* Additional Insights - NEW */}
+      {dailyReport && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-2xl border-2 border-blue-200">
+            <h4 className="text-lg font-bold text-blue-800 mb-4">💰 Collection Efficiency</h4>
+            <p className="text-4xl font-bold text-blue-600 mb-2">
+              {dailyReport.collectionEfficiency?.toFixed(1) || 0}%
+            </p>
+            <p className="text-sm text-blue-700">
+              ₹{dailyReport.totalCollected?.toLocaleString() || 0} collected of ₹{dailyReport.totalRevenue?.toLocaleString() || 0}
+            </p>
+          </div>
+
+          <div className="bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-2xl border-2 border-green-200">
+            <h4 className="text-lg font-bold text-green-800 mb-4">📊 Average Items/Bill</h4>
+            <p className="text-4xl font-bold text-green-600 mb-2">
+              {dailyReport.averageItemsPerBill?.toFixed(1) || 0}
+            </p>
+            <p className="text-sm text-green-700">
+              {dailyReport.totalItemsSold || 0} items across {dailyReport.totalBills || 0} bills
+            </p>
+          </div>
+
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-8 rounded-2xl border-2 border-purple-200">
+            <h4 className="text-lg font-bold text-purple-800 mb-4">🎯 Tax Collected</h4>
+            <p className="text-4xl font-bold text-purple-600 mb-2">
+              ₹{dailyReport.totalTax?.toLocaleString() || 0}
+            </p>
+            <p className="text-sm text-purple-700">
+              CGST: ₹{dailyReport.totalCGST?.toLocaleString() || 0} | SGST: ₹{dailyReport.totalSGST?.toLocaleString() || 0}
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Date Range Revenue Report */}
       <div className="bg-white p-12 rounded-3xl shadow-3xl">
-        <h3 className="text-4xl font-bold text-gray-800 mb-8 text-center">📅 Revenue by Date Range</h3>
+        <div className="flex justify-between items-center mb-8">
+          <h3 className="text-4xl font-bold text-gray-800">📅 Revenue by Date Range</h3>
+          {restaurantId && (
+            <ExportButtons
+              restaurantId={restaurantId}
+              reportType="daily-sales"
+              params={{ date: today }}
+            />
+          )}
+        </div>
+        
         <div className="flex flex-wrap gap-6 items-end justify-center mb-10">
           <div className="flex flex-col gap-2">
             <label className="text-lg font-semibold text-gray-700">From Date</label>
@@ -160,8 +238,45 @@ const SalesDashboard = () => {
           </div>
         )}
       </div>
+
+      {/* Quick Links to Detailed Reports */}
+      <div className="mt-16 bg-gradient-to-r from-amber-50 to-orange-50 p-8 rounded-2xl border-2 border-amber-200">
+        <h3 className="text-2xl font-bold text-amber-800 mb-6 text-center">📊 Explore Detailed Reports</h3>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <a
+            href="/admin/reports/sales"
+            className="block text-center p-4 bg-white rounded-lg hover:shadow-lg transition border-2 border-transparent hover:border-blue-400"
+          >
+            <div className="text-3xl mb-2">📊</div>
+            <p className="font-semibold text-gray-800">Sales Reports</p>
+          </a>
+          <a
+            href="/admin/reports/items"
+            className="block text-center p-4 bg-white rounded-lg hover:shadow-lg transition border-2 border-transparent hover:border-green-400"
+          >
+            <div className="text-3xl mb-2">🍽️</div>
+            <p className="font-semibold text-gray-800">Item Reports</p>
+          </a>
+          <a
+            href="/admin/reports/gst"
+            className="block text-center p-4 bg-white rounded-lg hover:shadow-lg transition border-2 border-transparent hover:border-purple-400"
+          >
+            <div className="text-3xl mb-2">📋</div>
+            <p className="font-semibold text-gray-800">GST Reports</p>
+          </a>
+          <a
+            href="/admin/reports/customers"
+            className="block text-center p-4 bg-white rounded-lg hover:shadow-lg transition border-2 border-transparent hover:border-orange-400"
+          >
+            <div className="text-3xl mb-2">👥</div>
+            <p className="font-semibold text-gray-800">Customer Analytics</p>
+          </a>
+        </div>
+      </div>
     </>
   );
 };
 
 export default SalesDashboard;
+
+// Made with Bob

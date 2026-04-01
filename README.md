@@ -1,70 +1,427 @@
-# Getting Started with Create React App
+# DesiRestro - Multi-tenant Restaurant POS System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern, feature-rich Point of Sale system for restaurants with multi-tenant support, real-time order management, and comprehensive reporting.
 
-## Available Scripts
+![React](https://img.shields.io/badge/React-19.2.3-blue)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4.19-38bdf8)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 🌟 Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Core Functionality
+- ✅ **Multi-tenant Architecture** - Isolated data per restaurant
+- ✅ **Role-based Access Control** - Admin, Captain, Kitchen, Cashier roles
+- ✅ **Real-time Order Management** - Live KOT updates
+- ✅ **Table Management** - Track occupancy and party status
+- ✅ **Inventory Tracking** - Stock management with low-stock alerts
+- ✅ **Comprehensive Reporting** - Sales, revenue, and analytics
+- ✅ **Staff Management** - Attendance, leaves, and performance tracking
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### User Roles
 
-### `npm test`
+#### 🔑 Admin/Owner
+- Dashboard with sales analytics
+- Menu management (categories & items)
+- Table configuration
+- Staff management
+- Inventory control
+- Reports and insights
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+#### 👨‍🍳 Captain
+- Table status overview
+- Create and manage parties
+- Take orders
+- View ready KOTs for serving
+- Real-time table updates
 
-### `npm run build`
+#### 🍳 Kitchen
+- View active KOTs
+- Mark orders as ready
+- Audio notifications for new orders
+- Order prioritization
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+#### 💰 Cashier
+- View occupied tables
+- Generate bills with GST
+- Multiple payment methods
+- Print receipts
+- Settlement tracking
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🚀 Getting Started
 
-### `npm run eject`
+### Prerequisites
+- Node.js 16+ and npm
+- Backend API server running (default: http://localhost:8080)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Installation
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. **Clone the repository**
+```bash
+git clone <repository-url>
+cd desirestro-frontend
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+2. **Install dependencies**
+```bash
+npm install
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+3. **Configure environment**
+Create a `.env` file:
+```env
+REACT_APP_API_URL=http://localhost:8080
+REACT_APP_WS_URL=ws://localhost:8080/ws
+REACT_APP_ENV=development
+```
 
-## Learn More
+4. **Start development server**
+```bash
+npm start
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+The app will open at [http://localhost:3000](http://localhost:3000)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+## 📁 Project Structure
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```
+desirestro-frontend/
+├── public/                 # Static assets
+│   ├── kot-beep.mp3       # Audio notification
+│   └── index.html
+├── src/
+│   ├── components/        # Reusable components
+│   │   ├── common/        # Common UI components
+│   │   │   ├── ErrorBoundary.js
+│   │   │   ├── Toast.js
+│   │   │   ├── LoadingSpinner.js
+│   │   │   └── ConfirmDialog.js
+│   │   ├── captain/       # Captain-specific components
+│   │   │   ├── TableGrid.jsx
+│   │   │   ├── PartyModal.jsx
+│   │   │   ├── OrderModal.jsx
+│   │   │   └── ReadyKOTPanel.jsx
+│   │   ├── Navbar.js
+│   │   └── ProtectedRoute.js
+│   ├── context/           # React Context
+│   │   └── AuthContext.js
+│   ├── hooks/             # Custom hooks
+│   │   └── useConfirm.js
+│   ├── pages/             # Page components
+│   │   ├── admin/         # Admin pages
+│   │   │   ├── SalesDashboard.js
+│   │   │   ├── MenuManagement.js
+│   │   │   ├── TableManagement.js
+│   │   │   ├── StaffManagement.js
+│   │   │   └── InventoryDashboard.js
+│   │   ├── AdminDashboard.js
+│   │   ├── CaptainHome.js
+│   │   ├── KitchenKOT.js
+│   │   ├── CashierBilling.js
+│   │   └── Login.js
+│   ├── services/          # API services
+│   │   └── api.js
+│   ├── utils/             # Utility functions
+│   │   ├── constants.js   # App constants
+│   │   └── helpers.js     # Helper functions
+│   ├── App.js             # Main app component
+│   ├── index.js           # Entry point
+│   └── index.css          # Global styles
+├── COMPREHENSIVE_REVIEW_AND_ENHANCEMENT_PLAN.md
+├── IMPLEMENTATION_GUIDE.md
+└── package.json
+```
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🔐 Authentication
 
-### Making a Progressive Web App
+### Default Login Credentials
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+The system uses JWT-based authentication. Contact your administrator for credentials.
 
-### Advanced Configuration
+**Example roles:**
+- Admin: Full system access
+- Captain: Table and order management
+- Kitchen: KOT management
+- Cashier: Billing operations
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Registration
 
-### Deployment
+New restaurants can register through the registration form:
+1. Navigate to login page
+2. Click "Register Restaurant"
+3. Fill in restaurant and owner details
+4. System creates admin account automatically
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
+## 🛠️ Technology Stack
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Frontend
+- **React 19.2.3** - UI framework
+- **React Router 6** - Navigation
+- **Tailwind CSS 3.4** - Styling
+- **Axios** - HTTP client
+- **Recharts** - Data visualization
+- **JWT Decode** - Token handling
+
+### Key Features
+- JWT authentication with refresh tokens
+- HTTP-only cookies for security
+- Responsive design
+- Real-time updates via polling
+- Audio notifications
+- Print functionality
+
+---
+
+## 📊 API Integration
+
+The frontend communicates with a REST API backend. Key endpoints:
+
+### Authentication
+- `POST /api/auth/login` - User login
+- `POST /api/auth/register` - Restaurant registration
+- `POST /api/auth/refresh` - Token refresh
+- `POST /api/auth/logout` - User logout
+
+### Menu Management
+- `GET /api/menu/categories` - Get categories
+- `GET /api/menu/items` - Get menu items
+- `POST /api/menu/items` - Create item
+- `PUT /api/menu/items/:id` - Update item
+- `DELETE /api/menu/items/:id` - Delete item
+
+### Orders & KOT
+- `GET /api/kot/active` - Get active KOTs
+- `GET /api/kot/ready` - Get ready KOTs
+- `POST /api/kot` - Create KOT
+- `PATCH /api/kot/:id/ready` - Mark as ready
+
+### Billing
+- `GET /api/bills/pending` - Get pending bills
+- `POST /api/bills/generate/:partyId` - Generate bill
+- `POST /api/bills/:id/settle` - Settle bill
+
+See `src/services/api.js` for complete API documentation.
+
+---
+
+## 🎨 Customization
+
+### Theming
+
+Modify `tailwind.config.js` to customize colors:
+
+```javascript
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        primary: '#f59e0b',    // Amber
+        secondary: '#ea580c',  // Orange
+      }
+    }
+  }
+}
+```
+
+### Constants
+
+Update `src/utils/constants.js` for:
+- Tax rates
+- Polling intervals
+- Payment methods
+- Validation rules
+
+---
+
+## 🧪 Testing
+
+```bash
+# Run tests
+npm test
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run tests in watch mode
+npm test -- --watch
+```
+
+---
+
+## 🏗️ Building for Production
+
+```bash
+# Create production build
+npm run build
+
+# The build folder will contain optimized files
+# Deploy the contents to your web server
+```
+
+### Environment Variables for Production
+
+```env
+REACT_APP_API_URL=https://api.yourdomain.com
+REACT_APP_WS_URL=wss://api.yourdomain.com/ws
+REACT_APP_ENV=production
+```
+
+---
+
+## 📈 Performance Optimization
+
+### Implemented
+- Code splitting by route
+- Lazy loading of components
+- Optimized images
+- Minified CSS and JS
+- Gzip compression
+
+### Recommended
+- CDN for static assets
+- Service worker for offline support
+- Image optimization
+- Bundle size analysis
+
+---
+
+## 🔒 Security
+
+### Implemented
+- JWT authentication
+- HTTP-only cookies for refresh tokens
+- CORS configuration
+- Input validation
+- Role-based access control
+
+### Recommended
+- Input sanitization with DOMPurify
+- CSRF protection
+- Rate limiting
+- Security headers
+- Regular security audits
+
+---
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Issue: API calls failing**
+- Check if backend server is running
+- Verify REACT_APP_API_URL in .env
+- Check browser console for CORS errors
+
+**Issue: Login not working**
+- Clear browser cache and cookies
+- Check network tab for API responses
+- Verify credentials with backend team
+
+**Issue: Real-time updates not working**
+- Check polling intervals in constants.js
+- Verify API endpoints are accessible
+- Consider implementing WebSocket
+
+**Issue: Build fails**
+- Delete node_modules and package-lock.json
+- Run `npm install` again
+- Check for dependency conflicts
+
+---
+
+## 📝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+### Code Style
+- Use ESLint and Prettier
+- Follow React best practices
+- Write meaningful commit messages
+- Add comments for complex logic
+
+---
+
+## 📚 Documentation
+
+- **[Comprehensive Review & Enhancement Plan](COMPREHENSIVE_REVIEW_AND_ENHANCEMENT_PLAN.md)** - Detailed analysis and roadmap
+- **[Implementation Guide](IMPLEMENTATION_GUIDE.md)** - Step-by-step implementation instructions
+
+---
+
+## 🗺️ Roadmap
+
+### Phase 1: Core Enhancements (Current)
+- [x] Error boundary implementation
+- [x] Toast notification system
+- [x] Loading states
+- [x] Utility functions and constants
+- [ ] Input sanitization
+- [ ] WebSocket integration
+
+### Phase 2: Feature Additions
+- [ ] Split bill functionality
+- [ ] Tax configuration
+- [ ] Order modifications
+- [ ] Advanced reporting
+- [ ] Audit logging
+
+### Phase 3: Advanced Features
+- [ ] Customer management
+- [ ] Reservation system
+- [ ] Recipe management
+- [ ] Multi-language support
+- [ ] Dark mode
+
+### Phase 4: Mobile & Integration
+- [ ] Mobile app (React Native)
+- [ ] QR code ordering
+- [ ] Payment gateway integration
+- [ ] Third-party delivery integration
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+---
+
+## 👥 Team
+
+- **Lead Developer** - Architecture & Implementation
+- **Backend Team** - API Development
+- **UI/UX Designer** - Interface Design
+- **QA Team** - Testing & Quality Assurance
+
+---
+
+## 📞 Support
+
+For support, email support@desirestro.com or join our Slack channel.
+
+---
+
+## 🙏 Acknowledgments
+
+- React team for the amazing framework
+- Tailwind CSS for the utility-first CSS framework
+- All contributors and testers
+
+---
+
+**Built with ❤️ for the restaurant industry**
+
+*Last Updated: April 1, 2026*
