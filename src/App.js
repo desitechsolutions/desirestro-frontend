@@ -28,6 +28,7 @@ function App() {
             <Routes>
               {/* Regular Login */}
               <Route path="/login" element={<Login />} />
+              <Route path="/reset-password" element={<Login />} />
               
               {/* Super Admin Routes */}
               <Route path="/superadmin/login" element={<SuperAdminLogin />} />
