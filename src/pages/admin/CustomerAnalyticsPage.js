@@ -1,15 +1,20 @@
 // src/pages/admin/CustomerAnalyticsPage.js
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { getTopCustomersReport } from '../../services/api';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import ExportButtons from '../../components/reports/ExportButtons';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import Navbar from '../../components/Navbar';
 
 const CustomerAnalyticsPage = () => {
   const { currentUser } = useAuth();
   const restaurantId = currentUser?.restaurantId;
+  const navigate = useNavigate();
+  const { t } = useTranslation('common');
 
   const [customerReport, setCustomerReport] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -58,23 +63,32 @@ const CustomerAnalyticsPage = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <LoadingSpinner />
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="flex justify-center items-center h-96">
+          <LoadingSpinner />
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <p className="text-red-600 text-lg">{error}</p>
-          <button
-            onClick={fetchCustomerReport}
-            className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-          >
-            Retry
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="p-8">
+          <button onClick={() => navigate('/admin')} className="mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium transition">
+            ← {t('nav.backToDashboard')}
           </button>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <p className="text-red-600 text-lg">{error}</p>
+            <button
+              onClick={fetchCustomerReport}
+              className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+            >
+              Retry
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -87,10 +101,20 @@ const CustomerAnalyticsPage = () => {
   const repeatCustomerRate = customerReport?.repeatCustomerRate || 0;
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen">
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <div className="p-8">
+        {/* Back button */}
+        <button
+          onClick={() => navigate('/admin')}
+          className="mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium transition"
+        >
+          ← {t('nav.backToDashboard')}
+        </button>
+
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-800 mb-2">Customer Analytics</h1>
+        <h1 className="text-4xl font-bold text-gray-800 mb-2">{t('admin.customerAnalytics')}</h1>
         <p className="text-gray-600">Analyze customer behavior and identify top performers</p>
       </div>
 
@@ -334,6 +358,7 @@ const CustomerAnalyticsPage = () => {
             </li>
           )}
         </ul>
+      </div>
       </div>
     </div>
   );

@@ -1,13 +1,26 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
+
+const HOME_ROUTES = {
+  ADMIN: '/admin',
+  OWNER: '/admin',
+  CAPTAIN: '/tables',
+  KITCHEN: '/kot',
+  CASHIER: '/billing',
+  SUPER_ADMIN: '/superadmin/dashboard',
+};
 
 const Navbar = () => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation('common');
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
+
+  const homeRoute = HOME_ROUTES[currentUser?.role] || '/login';
 
   const handleLogout = async () => {
     await logout();
@@ -30,20 +43,32 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex justify-between items-center h-16">
 
-          {/* Left: Brand */}
+          {/* Left: Brand + Home Button */}
           <div className="flex items-center gap-3">
-            <span className="text-2xl">🍛</span>
-            <div>
-              <h1 className="text-xl font-extrabold tracking-wide text-white leading-tight">
-                {currentUser?.restaurantName || 'DesiRestro POS'}
-              </h1>
-              {currentUser?.restaurantName && (
-                <p className="text-xs text-amber-200 leading-tight">DesiRestro POS</p>
-              )}
-            </div>
-            <span className="hidden sm:inline bg-white/20 text-xs px-3 py-1 rounded-full">
+            <button
+              onClick={() => navigate(homeRoute)}
+              className="flex items-center gap-3 hover:opacity-80 transition focus:outline-none"
+              aria-label={t('nav.home')}
+            >
+              <span className="text-2xl">🍛</span>
+              <div>
+                <h1 className="text-xl font-extrabold tracking-wide text-white leading-tight">
+                  {currentUser?.restaurantName || 'DesiRestro POS'}
+                </h1>
+                {currentUser?.restaurantName && (
+                  <p className="text-xs text-amber-200 leading-tight">DesiRestro POS</p>
+                )}
+              </div>
+            </button>
+            <span className="hidden sm:inline bg-white/20 text-xs px-3 py-1 rounded-full text-white">
               {currentUser?.role}
             </span>
+            <button
+              onClick={() => navigate(homeRoute)}
+              className="hidden md:flex items-center gap-1 bg-white/10 hover:bg-white/25 text-white text-sm px-3 py-1.5 rounded-lg transition"
+            >
+              🏠 <span>{t('nav.home')}</span>
+            </button>
           </div>
 
           {/* Right: Language Switcher + User Menu */}
@@ -85,18 +110,28 @@ const Navbar = () => {
                 <button
                   onClick={() => {
                     setOpen(false);
+                    navigate(homeRoute);
+                  }}
+                  className="w-full text-left px-5 py-3 hover:bg-gray-100 text-gray-700"
+                >
+                  🏠 {t('nav.home')}
+                </button>
+
+                <button
+                  onClick={() => {
+                    setOpen(false);
                     navigate('/profile');
                   }}
                   className="w-full text-left px-5 py-3 hover:bg-gray-100 text-gray-700"
                 >
-                  👤 Profile
+                  👤 {t('nav.profile')}
                 </button>
 
                 <button
                   onClick={handleLogout}
                   className="w-full text-left px-5 py-3 hover:bg-red-50 text-red-600 font-semibold"
                 >
-                  🚪 Logout
+                  🚪 {t('nav.logout')}
                 </button>
               </div>
             )}

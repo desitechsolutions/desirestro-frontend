@@ -13,7 +13,21 @@
     "inventory": "इन्वेंटरी",
     "reports": "रिपोर्ट",
     "settings": "सेटिंग्स",
-    "logout": "लॉगआउट"
+    "logout": "लॉगआउट",
+    "profile": "प्रोफ़ाइल",
+    "backToDashboard": "डैशबोर्ड पर वापस"
+  },
+  "admin": {
+    "title": "एडमिन कंट्रोल सेंटर",
+    "salesTab": "बिक्री और रिपोर्ट",
+    "inventoryTab": "इन्वेंटरी",
+    "tablesTab": "टेबल",
+    "menuTab": "मेनू",
+    "staffTab": "स्टाफ",
+    "salesReports": "बिक्री रिपोर्ट",
+    "itemReports": "आइटम रिपोर्ट",
+    "gstReports": "GST रिपोर्ट",
+    "customerAnalytics": "ग्राहक विश्लेषण"
   },
   "auth": {
     "login": "लॉगिन",

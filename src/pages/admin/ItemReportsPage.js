@@ -1,17 +1,22 @@
 // src/pages/admin/ItemReportsPage.js
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { getItemSalesReport, getCategorySalesReport } from '../../services/api';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import ExportButtons from '../../components/reports/ExportButtons';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import Navbar from '../../components/Navbar';
 
 const COLORS = ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#f97316', '#14b8a6', '#ef4444'];
 
 const ItemReportsPage = () => {
-  const { user } = useAuth();
-  const restaurantId = user?.restaurantId;
+  const { currentUser } = useAuth();
+  const restaurantId = currentUser?.restaurantId;
+  const navigate = useNavigate();
+  const { t } = useTranslation('common');
 
   const [itemReport, setItemReport] = useState(null);
   const [categoryReport, setCategoryReport] = useState(null);
@@ -65,23 +70,32 @@ const ItemReportsPage = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <LoadingSpinner />
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="flex justify-center items-center h-96">
+          <LoadingSpinner />
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <p className="text-red-600 text-lg">{error}</p>
-          <button
-            onClick={fetchReports}
-            className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-          >
-            Retry
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="p-8">
+          <button onClick={() => navigate('/admin')} className="mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium transition">
+            ← {t('nav.backToDashboard')}
           </button>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <p className="text-red-600 text-lg">{error}</p>
+            <button
+              onClick={fetchReports}
+              className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+            >
+              Retry
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -92,10 +106,20 @@ const ItemReportsPage = () => {
   const categories = categoryReport?.categories || [];
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen">
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <div className="p-8">
+        {/* Back button */}
+        <button
+          onClick={() => navigate('/admin')}
+          className="mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium transition"
+        >
+          ← {t('nav.backToDashboard')}
+        </button>
+
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-800 mb-2">Item Sales Reports</h1>
+        <h1 className="text-4xl font-bold text-gray-800 mb-2">{t('admin.itemReports')}</h1>
         <p className="text-gray-600">Analyze item-wise and category-wise sales performance</p>
       </div>
 
@@ -306,6 +330,7 @@ const ItemReportsPage = () => {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 };
