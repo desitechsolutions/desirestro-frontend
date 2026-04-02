@@ -11,6 +11,8 @@ import CashierBilling from './pages/CashierBilling';
 import SuperAdminLogin from './pages/SuperAdminLogin';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
+import Profile from './pages/Profile';
+import ChangePassword from './pages/ChangePassword';
 
 // Admin Report Pages
 import ItemReportsPage from './pages/admin/ItemReportsPage';
@@ -111,6 +113,26 @@ function App() {
                 element={
                   <ProtectedRoute allowedRoles={['CASHIER']}>
                     <CashierBilling />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Profile (all authenticated users) */}
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Change Password (all authenticated users, used for forced password change) */}
+              <Route
+                path="/change-password"
+                element={
+                  <ProtectedRoute>
+                    <ChangePassword />
                   </ProtectedRoute>
                 }
               />

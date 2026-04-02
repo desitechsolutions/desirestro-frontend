@@ -20,7 +20,7 @@ const LanguageSwitcher = () => {
       <select
         value={i18n.language}
         onChange={(e) => changeLanguage(e.target.value)}
-        className="block w-full px-4 py-2 pr-8 text-sm bg-white border border-gray-300 rounded-lg shadow-sm appearance-none hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
+        className="block w-full px-2 py-1.5 pr-6 sm:px-4 sm:py-2 sm:pr-8 text-sm bg-white border border-gray-300 rounded-lg shadow-sm appearance-none hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
         aria-label={t('common.selectLanguage')}
       >
         {languages.map((lang) => (

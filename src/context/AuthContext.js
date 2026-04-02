@@ -22,12 +22,14 @@ export const AuthProvider = ({ children }) => {
           fullName: sessionStorage.getItem('fullName') || 'User',
           restaurantId: decoded.restaurantId || null,
           restaurantName: sessionStorage.getItem('restaurantName') || null,
+          forcePasswordChange: sessionStorage.getItem('forcePasswordChange') === 'true',
         });
       } catch (error) {
         console.error('Invalid token', error);
         sessionStorage.removeItem('token');
         sessionStorage.removeItem('fullName');
         sessionStorage.removeItem('restaurantName');
+        sessionStorage.removeItem('forcePasswordChange');
       }
     }
     setLoading(false);
@@ -40,11 +42,13 @@ export const AuthProvider = ({ children }) => {
    * @param {string} fullName   - display name
    * @param {number|null} restaurantId   - tenant restaurant id
    * @param {string|null} restaurantName - tenant restaurant name
+   * @param {boolean} forcePasswordChange - whether the user must change password
    */
-  const login = (token, role, fullName, restaurantId = null, restaurantName = null) => {
+  const login = (token, role, fullName, restaurantId = null, restaurantName = null, forcePasswordChange = false) => {
     sessionStorage.setItem('token', token); // ← sessionStorage
     sessionStorage.setItem('fullName', fullName || '');
     if (restaurantName) sessionStorage.setItem('restaurantName', restaurantName);
+    sessionStorage.setItem('forcePasswordChange', forcePasswordChange ? 'true' : 'false');
     const decoded = jwtDecode(token);
     setCurrentUser({
       username: decoded.sub,
@@ -52,6 +56,7 @@ export const AuthProvider = ({ children }) => {
       fullName,
       restaurantId: restaurantId ?? decoded.restaurantId ?? null,
       restaurantName: restaurantName || null,
+      forcePasswordChange: !!forcePasswordChange,
     });
   };
 
@@ -65,12 +70,19 @@ export const AuthProvider = ({ children }) => {
       sessionStorage.removeItem('token');
       sessionStorage.removeItem('fullName');
       sessionStorage.removeItem('restaurantName');
+      sessionStorage.removeItem('forcePasswordChange');
       setCurrentUser(null);
     }
   };
 
+  // Clear the force-password-change flag after the user has changed their password
+  const clearForcePasswordChange = () => {
+    sessionStorage.setItem('forcePasswordChange', 'false');
+    setCurrentUser((prev) => prev && { ...prev, forcePasswordChange: false });
+  };
+
   return (
-    <AuthContext.Provider value={{ currentUser, login, logout, loading }}>
+    <AuthContext.Provider value={{ currentUser, login, logout, clearForcePasswordChange, loading }}>
       {children}
     </AuthContext.Provider>
   );
