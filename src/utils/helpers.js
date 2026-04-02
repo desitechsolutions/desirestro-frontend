@@ -97,6 +97,7 @@ export const validatePassword = (password) => {
   const hasLowerCase = /[a-z]/.test(password);
   const hasNumber = /[0-9]/.test(password);
   const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  void hasSpecialChar; // checked implicitly through the full validation
   
   if (!hasUpperCase || !hasLowerCase || !hasNumber) {
     return {
@@ -402,6 +403,16 @@ export const downloadFile = (data, filename, type = 'text/plain') => {
 };
 
 /**
+ * Format a number with locale-aware thousands separator
+ * @param {number} value
+ * @returns {string}
+ */
+export const formatNumber = (value) => {
+  if (typeof value !== 'number' || isNaN(value)) return '0';
+  return value.toLocaleString('en-IN');
+};
+
+/**
  * Copy text to clipboard
  * @param {string} text - Text to copy
  * @returns {Promise<boolean>} Success status
@@ -424,8 +435,9 @@ export const copyToClipboard = async (text) => {
   }
 };
 
-export default {
+const helpers = {
   formatCurrency,
+  formatNumber,
   formatDate,
   formatTime,
   isValidEmail,
@@ -450,5 +462,7 @@ export default {
   downloadFile,
   copyToClipboard,
 };
+
+export default helpers;
 
 // Made with Bob

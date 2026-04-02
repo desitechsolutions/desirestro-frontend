@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { authLogin } from '../services/api';
 import toast from 'react-hot-toast';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
@@ -15,13 +16,15 @@ const SuperAdminLogin = () => {
     setLoading(true);
 
     try {
-      const response = await login(credentials.username, credentials.password);
-      
-      if (response.user.role !== 'SUPER_ADMIN') {
+      const res = await authLogin({ username: credentials.username, password: credentials.password });
+      const data = res.data?.data ?? res.data;
+
+      if (data.role !== 'SUPER_ADMIN') {
         toast.error('Access denied. Super Admin credentials required.');
         return;
       }
 
+      login(data.token, data.role, data.fullName, data.restaurantId, data.restaurantName);
       toast.success('Welcome, Super Admin!');
       navigate('/superadmin/dashboard');
     } catch (error) {

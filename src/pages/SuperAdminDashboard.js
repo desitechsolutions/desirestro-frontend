@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { formatNumber, formatCurrency } from '../utils/helpers';
@@ -10,6 +11,7 @@ const SuperAdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   useEffect(() => {
     fetchDashboardData();
@@ -17,7 +19,7 @@ const SuperAdminDashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await api.get('/superadmin/dashboard/stats');
+      const response = await api.get('/api/superadmin/dashboard/stats');
       setStats(response.data.data);
     } catch (error) {
       toast.error('Failed to load dashboard data');
@@ -27,9 +29,8 @@ const SuperAdminDashboard = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+  const handleLogout = async () => {
+    await logout();
     navigate('/superadmin/login');
     toast.success('Logged out successfully');
   };

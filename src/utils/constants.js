@@ -148,7 +148,7 @@ export const FEATURES = {
   MULTI_LANGUAGE: false,
 };
 
-export default {
+const constants = {
   API_CONFIG,
   POLLING_INTERVALS,
   TAX_CONFIG,
@@ -167,5 +167,7 @@ export default {
   DATE_FORMATS,
   FEATURES,
 };
+
+export default constants;
 
 // Made with Bob

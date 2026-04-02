@@ -19,15 +19,6 @@ const GSTReportCard = ({ gstReport }) => {
     }).format(amount || 0);
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-IN', { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
-    });
-  };
 
   return (
     <div className="bg-white p-8 rounded-2xl shadow-lg">

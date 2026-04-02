@@ -56,6 +56,7 @@ const ItemReportsPage = () => {
 
   useEffect(() => {
     fetchReports();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [restaurantId]);
 
   const handleGenerateReport = () => {
