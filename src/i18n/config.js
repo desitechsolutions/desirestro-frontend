@@ -29,6 +29,7 @@ i18n
     resources,
     fallbackLng: 'en',
     defaultNS: 'common',
+    load: 'languageOnly', // strips region codes (e.g. 'en-US' → 'en')
     
     // Language detection options
     detection: {

@@ -13,7 +13,21 @@
     "inventory": "ఇన్వెంటరీ",
     "reports": "నివేదికలు",
     "settings": "సెట్టింగ్‌లు",
-    "logout": "లాగ్అవుట్"
+    "logout": "లాగ్అవుట్",
+    "profile": "ప్రొఫైల్",
+    "backToDashboard": "డాష్‌బోర్డ్‌కు తిరిగి"
+  },
+  "admin": {
+    "title": "అడ్మిన్ కంట్రోల్ సెంటర్",
+    "salesTab": "అమ్మకాలు & నివేదికలు",
+    "inventoryTab": "ఇన్వెంటరీ",
+    "tablesTab": "టేబుళ్ళు",
+    "menuTab": "మెనూ",
+    "staffTab": "సిబ్బంది",
+    "salesReports": "అమ్మకాల నివేదికలు",
+    "itemReports": "వస్తువు నివేదికలు",
+    "gstReports": "GST నివేదికలు",
+    "customerAnalytics": "కస్టమర్ విశ్లేషణ"
   },
   "auth": {
     "login": "లాగిన్",

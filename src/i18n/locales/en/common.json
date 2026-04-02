@@ -13,7 +13,21 @@
     "inventory": "Inventory",
     "reports": "Reports",
     "settings": "Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "profile": "Profile",
+    "backToDashboard": "Back to Dashboard"
+  },
+  "admin": {
+    "title": "Admin Control Center",
+    "salesTab": "Sales & Reports",
+    "inventoryTab": "Inventory",
+    "tablesTab": "Tables",
+    "menuTab": "Menu",
+    "staffTab": "Staff",
+    "salesReports": "Sales Reports",
+    "itemReports": "Item Reports",
+    "gstReports": "GST Reports",
+    "customerAnalytics": "Customer Analytics"
   },
   "auth": {
     "login": "Login",

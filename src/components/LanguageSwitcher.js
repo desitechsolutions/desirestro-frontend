@@ -10,6 +10,9 @@ const LanguageSwitcher = () => {
     { code: 'te', name: 'తెలుగు', flag: '🇮🇳' }
   ];
 
+  // Normalize language code (e.g. 'en-US' → 'en') so it matches available options
+  const currentLang = (i18n.language || 'en').split('-')[0];
+
   const changeLanguage = (langCode) => {
     i18n.changeLanguage(langCode);
     localStorage.setItem('i18nextLng', langCode);
@@ -18,7 +21,7 @@ const LanguageSwitcher = () => {
   return (
     <div className="relative inline-block text-left">
       <select
-        value={i18n.language}
+        value={currentLang}
         onChange={(e) => changeLanguage(e.target.value)}
         className="block w-full px-2 py-1.5 pr-6 sm:px-4 sm:py-2 sm:pr-8 text-sm bg-white border border-gray-300 rounded-lg shadow-sm appearance-none hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
         aria-label={t('common.selectLanguage')}

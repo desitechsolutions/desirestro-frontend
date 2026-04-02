@@ -1,15 +1,20 @@
 // src/pages/admin/GSTReportPage.js
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { getGSTReport } from '../../services/api';
 import GSTReportCard from '../../components/reports/GSTReportCard';
 import ExportButtons from '../../components/reports/ExportButtons';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import Navbar from '../../components/Navbar';
 
 const GSTReportPage = () => {
-  const { user } = useAuth();
-  const restaurantId = user?.restaurantId;
+  const { currentUser } = useAuth();
+  const restaurantId = currentUser?.restaurantId;
+  const navigate = useNavigate();
+  const { t } = useTranslation('common');
 
   const [gstReport, setGstReport] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -73,17 +78,30 @@ const GSTReportPage = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <LoadingSpinner />
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="flex justify-center items-center h-96">
+          <LoadingSpinner />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen">
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <div className="p-8">
+        {/* Back button */}
+        <button
+          onClick={() => navigate('/admin')}
+          className="mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium transition"
+        >
+          ← {t('nav.backToDashboard')}
+        </button>
+
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-800 mb-2">GST Report (GSTR-1)</h1>
+        <h1 className="text-4xl font-bold text-gray-800 mb-2">{t('admin.gstReports')} (GSTR-1)</h1>
         <p className="text-gray-600">Generate GST compliance report for tax filing</p>
       </div>
 
@@ -343,6 +361,7 @@ const GSTReportPage = () => {
             <span>Keep backup of this report for audit purposes</span>
           </li>
         </ul>
+      </div>
       </div>
     </div>
   );

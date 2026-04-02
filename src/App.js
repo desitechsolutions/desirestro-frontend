@@ -18,7 +18,7 @@ import ChangePassword from './pages/ChangePassword';
 import ItemReportsPage from './pages/admin/ItemReportsPage';
 import GSTReportPage from './pages/admin/GSTReportPage';
 import CustomerAnalyticsPage from './pages/admin/CustomerAnalyticsPage';
-import SalesDashboard from './pages/admin/SalesDashboard';
+import SalesReportPage from './pages/admin/SalesReportPage';
 
 function App() {
   return (
@@ -58,7 +58,7 @@ function App() {
                 path="/admin/reports/sales"
                 element={
                   <ProtectedRoute allowedRoles={['ADMIN', 'OWNER']}>
-                    <SalesDashboard />
+                    <SalesReportPage />
                   </ProtectedRoute>
                 }
               />
