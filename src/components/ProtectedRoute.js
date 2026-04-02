@@ -1,9 +1,10 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { currentUser, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -15,6 +16,12 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
   if (!currentUser) {
     return <Navigate to="/login" replace />;
+  }
+
+  // If the user must change their password, redirect to /change-password
+  // (skip this check if we're already on /change-password to avoid a redirect loop)
+  if (currentUser.forcePasswordChange && location.pathname !== '/change-password') {
+    return <Navigate to="/change-password" replace />;
   }
 
   if (allowedRoles && !allowedRoles.includes(currentUser.role)) {

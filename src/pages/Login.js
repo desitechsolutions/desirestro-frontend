@@ -142,14 +142,20 @@ const Login = () => {
       const res = await authLogin({ username, password });
       // Backend wraps response in ApiResponse<AuthResponse>
       const data = res.data?.data ?? res.data;
+      const forcePasswordChange = !!data.forcePasswordChange;
       login(
         data.token,
         data.role,
         data.fullName,
         data.restaurantId,
-        data.restaurantName
+        data.restaurantName,
+        forcePasswordChange
       );
-      navigate(ROLE_ROUTES[data.role] || '/login', { replace: true });
+      if (forcePasswordChange) {
+        navigate('/change-password', { replace: true });
+      } else {
+        navigate(ROLE_ROUTES[data.role] || '/login', { replace: true });
+      }
     } catch (err) {
       const msg =
         err.response?.data?.message ||

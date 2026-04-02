@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const Navbar = () => {
   const { currentUser, logout } = useAuth();
@@ -45,7 +46,11 @@ const Navbar = () => {
             </span>
           </div>
 
-          {/* Right: User Menu */}
+          {/* Right: Language Switcher + User Menu */}
+          <div className="flex items-center gap-3">
+          <div className="hidden sm:block">
+            <LanguageSwitcher />
+          </div>
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setOpen(!open)}
@@ -95,6 +100,7 @@ const Navbar = () => {
                 </button>
               </div>
             )}
+          </div>
           </div>
 
         </div>
