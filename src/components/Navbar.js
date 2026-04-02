@@ -48,7 +48,7 @@ const Navbar = () => {
 
           {/* Right: Language Switcher + User Menu */}
           <div className="flex items-center gap-3">
-          <div className="hidden sm:block">
+          <div>
             <LanguageSwitcher />
           </div>
           <div className="relative" ref={dropdownRef}>
