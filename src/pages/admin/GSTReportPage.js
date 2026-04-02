@@ -64,6 +64,7 @@ const GSTReportPage = () => {
 
   useEffect(() => {
     fetchGSTReport();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [restaurantId]);
 
   const handleGenerateReport = () => {

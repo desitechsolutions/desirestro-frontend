@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import { ToastProvider } from './components/common/Toast';
@@ -23,6 +24,7 @@ function App() {
       <ToastProvider>
         <AuthProvider>
           <BrowserRouter>
+            <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
             <Routes>
               {/* Regular Login */}
               <Route path="/login" element={<Login />} />

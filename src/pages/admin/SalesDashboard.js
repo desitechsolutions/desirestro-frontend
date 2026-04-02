@@ -9,8 +9,8 @@ import ExportButtons from '../../components/reports/ExportButtons';
 import API from '../../services/api';
 
 const SalesDashboard = () => {
-  const { user } = useAuth();
-  const restaurantId = user?.restaurantId;
+  const { currentUser } = useAuth();
+  const restaurantId = currentUser?.restaurantId;
 
   const [todayStats, setTodayStats] = useState({ revenue: 0, bills: 0, avgBill: 0, orders: 0 });
   const [topItems, setTopItems] = useState([]);
@@ -61,6 +61,7 @@ const SalesDashboard = () => {
       }
     };
     fetchSalesData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [restaurantId]);
 
   const fetchRangeRevenue = async () => {

@@ -3,13 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { getTopCustomersReport } from '../../services/api';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import ExportButtons from '../../components/reports/ExportButtons';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 const CustomerAnalyticsPage = () => {
-  const { user } = useAuth();
-  const restaurantId = user?.restaurantId;
+  const { currentUser } = useAuth();
+  const restaurantId = currentUser?.restaurantId;
 
   const [customerReport, setCustomerReport] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -49,6 +49,7 @@ const CustomerAnalyticsPage = () => {
 
   useEffect(() => {
     fetchCustomerReport();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [restaurantId]);
 
   const handleGenerateReport = () => {
