@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import API from '../../services/api';
+import { useTranslation } from 'react-i18next';
+import DOMPurify from 'dompurify';
 
 const MenuManagement = () => {
   const [categories, setCategories] = useState([]);

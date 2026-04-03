@@ -2,6 +2,7 @@
 // Simple toast notification system (no external dependencies)
 
 import React, { createContext, useContext, useState, useCallback } from 'react';
+import toast from 'react-hot-toast';
 
 const ToastContext = createContext();
 
@@ -131,5 +132,3 @@ const Toast = ({ toast, onRemove }) => {
 };
 
 export default ToastProvider;
-
-// Made with Bob

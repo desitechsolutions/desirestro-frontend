@@ -422,6 +422,37 @@ For support, email support@desirestro.com or join our Slack channel.
 
 ---
 
+## 🐛 Missing / Newly-added client capabilities (quick)
+
+- Client helpers added to src/services/api.js:
+  - setAuthToken(token), clearAuthToken()
+  - requestWithRetry(fn) for transient network retries
+  - Reservations endpoints: GET/POST/PUT/cancel
+  - Split-bill endpoints: create/list/get splits
+  - Tax settings: get/update per restaurant
+  - createWebSocket(path) factory (uses REACT_APP_WS_URL and token)
+  - downloadBlob(blob, filename) helper
+
+## Short developer checklist — immediate frontend tasks
+
+1. Install required client libs:
+   - npm install date-fns react-hot-toast dompurify react-to-print
+
+2. Implement/Enhance pages (use the added API helpers):
+   - MenuItemForm.js — add spice level, dietary flags, HSN, prep time.
+   - SplitBillModal.js — UI to create equal/custom/item splits, call splitBill API.
+   - Reservation pages — ReservationsList, ReservationForm (use Reservations endpoints).
+   - Replace alert() with toast (react-hot-toast) and use DOMPurify before sending/rendering user input.
+   - Wire real-time KOT/billing updates using createWebSocket('/kot') and reconnect logic.
+
+3. Testing:
+   - Verify token refresh flow (API interceptor already present).
+   - Test split-bill flows and reservation CRUD.
+   - Run frontend build after installing dependencies.
+}
+
+---
+
 **Built with ❤️ for the restaurant industry**
 
 *Last Updated: April 1, 2026*

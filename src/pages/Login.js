@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import api, { authLogin, authRegister } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
+import DOMPurify from 'dompurify';
 
 const ROLE_ROUTES = {
   ADMIN: '/admin',
@@ -122,6 +125,7 @@ const Login = () => {
 
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   // Check for reset token in URL on mount
   useEffect(() => {
@@ -157,6 +161,7 @@ const Login = () => {
         navigate(ROLE_ROUTES[data.role] || '/login', { replace: true });
       }
     } catch (err) {
+      toast.error(t('common.error'));
       const msg =
         err.response?.data?.message ||
         err.response?.data?.data?.message ||

@@ -1,6 +1,7 @@
 // src/components/common/ConfirmDialog.js
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const ConfirmDialog = ({
   isOpen,

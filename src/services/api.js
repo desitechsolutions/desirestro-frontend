@@ -333,8 +333,93 @@ export const getWeeklyRevenue = () =>
 export const getRevenueByRange = (from, to) =>
   API.get(`/api/admin/revenue?from=${from}&to=${to}`);
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ── (ADDED) Client helpers, extra endpoints and WebSocket factory ──────────────
+
+// Set auth token programmatically (useful after login/registration)
+export const setAuthToken = (token) => {
+  if (token) {
+    sessionStorage.setItem('token', token);
+    API.defaults.headers.common.Authorization = `Bearer ${token}`;
+  }
+};
+
+// Clear auth token (logout helper)
+export const clearAuthToken = () => {
+  sessionStorage.removeItem('token');
+  delete API.defaults.headers.common.Authorization;
+};
+
+// Simple retry wrapper for transient network errors
+export const requestWithRetry = async (fn, retries = 2, backoffMs = 300) => {
+  try {
+    return await fn();
+  } catch (err) {
+    const shouldRetry = !err.response; // network errors only
+    if (!shouldRetry || retries <= 0) throw err;
+    await new Promise((res) => setTimeout(res, backoffMs));
+    return requestWithRetry(fn, retries - 1, backoffMs * 2);
+  }
+};
+
+// ── RESERVATIONS ───────────────────────────────────────────────────────────────
+export const getReservations = (params) =>
+  API.get('/api/reservations', { params });
+
+export const getReservation = (id) =>
+  API.get(`/api/reservations/${id}`);
+
+export const createReservation = (data) =>
+  API.post('/api/reservations', data);
+
+export const updateReservation = (id, data) =>
+  API.put(`/api/reservations/${id}`, data);
+
+export const cancelReservation = (id) =>
+  API.post(`/api/reservations/${id}/cancel`);
+
+// ── SPLIT BILL ─────────────────────────────────────────────────────────────────
+export const splitBill = (restaurantId, billId, data) =>
+  API.post(`/api/restaurants/${restaurantId}/billing/${billId}/split`, data);
+
+export const getSplitBill = (restaurantId, splitId) =>
+  API.get(`/api/restaurants/${restaurantId}/billing/splits/${splitId}`);
+
+export const listSplitBills = (restaurantId, params) =>
+  API.get(`/api/restaurants/${restaurantId}/billing/splits`, { params });
+
+// ── SETTINGS / TAX CONFIG ─────────────────────────────────────────────────────
+export const getTaxConfig = (restaurantId) =>
+  API.get(`/api/restaurants/${restaurantId}/settings/tax`);
+
+export const updateTaxConfig = (restaurantId, data) =>
+  API.put(`/api/restaurants/${restaurantId}/settings/tax`, data);
+
+// ── WEBSOCKET FACTORY ─────────────────────────────────────────────────────────
+export const createWebSocket = (path = '') => {
+  const rawWs = process.env.REACT_APP_WS_URL || `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws`;
+  try {
+    const token = sessionStorage.getItem('token');
+    const url = new URL(rawWs);
+    if (path) url.pathname = (url.pathname.replace(/\/$/, '') + '/' + path.replace(/^\//, ''));
+    if (token) url.searchParams.set('token', token);
+    return new WebSocket(url.toString());
+  } catch (e) {
+    // Fallback: return a WebSocket that will error (caller should handle)
+    return new WebSocket(rawWs);
+  }
+};
+
+// ── BLOB DOWNLOAD HELPER ──────────────────────────────────────────────────────
+export const downloadBlob = (blob, filename = 'download.bin') => {
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  window.URL.revokeObjectURL(url);
+};
+
 // Default export kept for backward-compatibility with existing pages
-// that do: import API from '../services/api';
-// ─────────────────────────────────────────────────────────────────────────────
 export default API;
