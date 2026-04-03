@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import API from '../../services/api';
+import { useToast } from '../../components/common/Toast';
 
 const TableManagement = () => {
+  const toast = useToast();
   const [tables, setTables] = useState([]);
   const [editingTable, setEditingTable] = useState(null);
   const [newTable, setNewTable] = useState({ tableNumber: '', capacity: 0 });
@@ -26,7 +28,7 @@ const TableManagement = () => {
 
   const createTable = async () => {
     if (!newTable.tableNumber || newTable.capacity <= 0) {
-      alert('Please enter valid table number and capacity');
+      toast.error('Please enter valid table number and capacity');
       return;
     }
     try {
@@ -38,9 +40,9 @@ const TableManagement = () => {
       });
       setTables(prev => [...prev, res.data]);
       setNewTable({ tableNumber: '', capacity: 0 });
-      alert('Table added!');
+      toast.success('Table added!');
     } catch (err) {
-      alert('Failed — number may exist');
+      toast.error('Failed — number may exist');
     }
   };
 
@@ -49,9 +51,9 @@ const TableManagement = () => {
       const res = await API.put(`/api/tables/${editingTable.id}`, editingTable);
       setTables(prev => prev.map(t => t.id === editingTable.id ? res.data : t));
       setEditingTable(null);
-      alert('Table updated!');
+      toast.success('Table updated!');
     } catch (err) {
-      alert('Failed to update');
+      toast.error('Failed to update');
     }
   };
 
@@ -60,9 +62,9 @@ const TableManagement = () => {
     try {
       await API.delete(`/api/tables/${id}`);
       setTables(prev => prev.filter(t => t.id !== id));
-      alert('Table deleted');
+      toast.success('Table deleted');
     } catch (err) {
-      alert('Cannot delete occupied table');
+      toast.error('Cannot delete occupied table');
     }
   };
 

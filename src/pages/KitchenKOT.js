@@ -3,8 +3,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import API from '../services/api';
+import { useToast } from '../components/common/Toast';
 
 const KitchenKOT = () => {
+  const toast = useToast();
   const [kots, setKots] = useState([]);
   const [interacted, setInteracted] = useState(false);
   const prevKOTsRef = useRef([]); // To detect truly new KOTs
@@ -148,7 +150,7 @@ const KitchenKOT = () => {
                             setKots(prev => prev.filter(k => k.id !== kot.id));
                             playAlertSound(); // Optional soft confirmation beep
                         } catch (err) {
-                            alert('Failed to mark as ready');
+                            toast.error('Failed to mark as ready');
                         }
                         }}
                         className="px-12 py-6 bg-green-600 hover:bg-green-700 text-white text-2xl font-bold rounded-xl shadow-lg transition transform hover:scale-105"

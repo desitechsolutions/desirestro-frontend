@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import API from '../services/api';
+import { useToast } from '../components/common/Toast';
 
 import TableGrid from '../components/captain/TableGrid';
 import ReadyKOTPanel from '../components/captain/ReadyKOTPanel';
@@ -10,6 +11,7 @@ import PartyModal from '../components/captain/PartyModal';
 import OrderModal from '../components/captain/OrderModal';
 
 const CaptainHome = () => {
+  const toast = useToast();
   const [tables, setTables] = useState([]);
   const [selectedTable, setSelectedTable] = useState(null);
   const [parties, setParties] = useState([]);
@@ -146,7 +148,7 @@ const CaptainHome = () => {
       }));
 
       const res = await API.post(`/api/kot/party/${selectedParty.id}`, { items });
-      alert(`KOT #${res.data.kotNumber} sent!`);
+      toast.success(`KOT #${res.data.kotNumber} sent!`);
 
       const printWin = window.open('', '_blank');
       printWin.document.write(`
@@ -169,7 +171,7 @@ const CaptainHome = () => {
 
       setCart([]);
     } catch (err) {
-      alert('Failed to send KOT');
+      toast.error('Failed to send KOT');
     } finally {
       setSending(false);
     }

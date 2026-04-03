@@ -2,19 +2,21 @@
 
 import React, { useState } from 'react';
 import { exportReportPDF, exportReportExcel } from '../../services/api';
+import { useToast } from '../common/Toast';
 
 const ExportButtons = ({ restaurantId, reportType, params, reportData }) => {
+  const toast = useToast();
   const [loading, setLoading] = useState(false);
   const [exportType, setExportType] = useState(null);
 
   const handleExport = async (format) => {
     if (!restaurantId) {
-      alert('Restaurant ID is required for export');
+      toast.error('Restaurant ID is required for export');
       return;
     }
 
     if (!reportType) {
-      alert('Report type is required for export');
+      toast.error('Report type is required for export');
       return;
     }
 
@@ -44,11 +46,11 @@ const ExportButtons = ({ restaurantId, reportType, params, reportData }) => {
       window.URL.revokeObjectURL(url);
       
       // Show success message
-      alert(`Report exported successfully as ${filename}`);
+      toast.success(`Report exported successfully as ${filename}`);
     } catch (error) {
       console.error('Export error:', error);
       const errorMessage = error.response?.data?.message || 'Failed to export report. Please try again.';
-      alert(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
       setExportType(null);

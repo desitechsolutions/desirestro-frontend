@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import API from '../services/api';
+import { useToast } from '../components/common/Toast';
 
 const PAYMENT_MODES = [
   { value: 'CASH', label: '💵 Cash', color: 'bg-green-600 hover:bg-green-700' },
@@ -11,6 +12,7 @@ const PAYMENT_MODES = [
 ];
 
 const CashierBilling = () => {
+  const toast = useToast();
   const [tables, setTables] = useState([]);
   const [selectedTable, setSelectedTable] = useState(null);
   const [parties, setParties] = useState([]);
@@ -149,7 +151,7 @@ const CashierBilling = () => {
       }
     } catch (err) {
       console.error('Settle error:', err);
-      alert('Failed to settle bill');
+      toast.error('Failed to settle bill');
     } finally {
       setSettling(false);
     }

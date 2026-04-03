@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import API from '../../services/api';
+import { useToast } from '../../components/common/Toast';
 
 const InventoryDashboard = () => {
+  const toast = useToast();
   const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -26,7 +28,7 @@ const InventoryDashboard = () => {
       setIngredients(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error(err);
-      alert('Failed to load inventory');
+      toast.error('Failed to load inventory');
     } finally {
       setLoading(false);
     }
@@ -68,7 +70,7 @@ const InventoryDashboard = () => {
   const saveIngredient = async () => {
     try {
       if (!form.name.trim() || !form.unit.trim()) {
-        alert('Name and Unit are required');
+        toast.error('Name and Unit are required');
         return;
       }
 
@@ -86,7 +88,7 @@ const InventoryDashboard = () => {
 
       setForm(emptyIngredient);
     } catch (err) {
-      alert('Operation failed');
+      toast.error('Operation failed');
     }
   };
 
@@ -96,7 +98,7 @@ const InventoryDashboard = () => {
       await API.delete(`/api/ingredients/${id}`);
       setIngredients(prev => prev.filter(i => i.id !== id));
     } catch {
-      alert('Cannot delete ingredient (may be in use)');
+      toast.error('Cannot delete ingredient (may be in use)');
     }
   };
 
